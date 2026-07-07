@@ -1,0 +1,23 @@
+[project]
+name = "cpr2ardour"
+version = "0.1.0"
+description = "Convert Cubase CPR projects to Ardour"
+readme = "README.md"
+requires-python = ">=3.14"
+
+dependencies = [
+    "typer",
+    "rich",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+cpr2ardour = "cpr2ardour.main:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
