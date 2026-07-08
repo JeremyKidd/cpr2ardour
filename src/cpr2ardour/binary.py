@@ -67,11 +67,6 @@ class BinaryReader:
         length = self.read_u32_be()
         return self.read_string(length)
 
-    def read_length_prefixed_string(self) -> str:
-        """Read a big-endian length-prefixed ASCII string."""
-        length = self.read_u32_be()
-        return self.read_string(length)
-
     def __enter__(self) -> "BinaryReader":
         """Enter a context manager."""
         return self

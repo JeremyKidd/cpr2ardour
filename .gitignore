@@ -1,8 +1,12 @@
-.venv/
+# Python
 __pycache__/
 *.pyc
-.pytest_cache/
-.coverage
-dist/
-build/
-*.egg-info/
+
+# Virtual environment
+.venv/
+
+# Private Cubase projects
+tests/data/*.cpr
+
+src/*.egg-info/
+src/cpr2ardour.egg-info/
