@@ -2,19 +2,12 @@ from dataclasses import dataclass
 
 from cpr2ardour.binary import BinaryReader
 
-RIFF_HEADER_SIZE = 12
-
 
 @dataclass(slots=True)
-class RiffFile:
-    """A RIFF-style file."""
-
-    form_type: str
-
 class Chunk:
     """A chunk in a RIFF-style file."""
 
-    chunk_id: str
+    id: str
     size: int
     file_offset: int
 
@@ -27,31 +20,38 @@ class Chunk:
         return self.data_offset + self.size
 
 
+@dataclass(slots=True)
+class RiffFile:
+    """A RIFF-style file."""
+
+    form_type: str
+    root: Chunk
+
 def read_chunk_header(reader: BinaryReader) -> Chunk:
     """Read a chunk header."""
     offset = reader.tell()
-    chunk_id = reader.read_fourcc()
+    id = reader.read_fourcc()
     size = reader.read_u32_be()
 
     return Chunk(
-        chunk_id=chunk_id,
+        id=id,
         size=size,
         file_offset=offset,
     )
 
-def read_riff(reader: BinaryReader) -> RiffFile:
-    """Read the RIFF file header."""
 
+def read_riff(reader: BinaryReader) -> RiffFile:
     magic = reader.read_fourcc()
 
     if magic != "RIFF":
-        raise ValueError(
-            f"Expected 'RIFF' but found '{magic}'."
-        )
+        raise ValueError(f"Expected 'RIFF' but found '{magic}'.")
 
-    reader.read_u32_be()
-
+    riff_size = reader.read_u32_be()
     form_type = reader.read_fourcc()
+    root = read_chunk_header(reader)
 
-    return RiffFile(form_type=form_type)
+    return RiffFile(
+        form_type=form_type,
+        root=root,
+    )
 

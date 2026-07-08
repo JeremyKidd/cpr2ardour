@@ -54,6 +54,19 @@ class BinaryReader:
         """Read a 32-bit unsigned integer (big-endian)."""
         return int.from_bytes(self.read(4), byteorder="big")
 
+    def read_bytes(self, size: int) -> bytes:
+        """Read raw bytes."""
+        return self.read(size)
+
+    def read_string(self, size: int) -> str:
+        """Read an ASCII string of *size* bytes."""
+        return self.read(size).decode("ascii")
+
+    def read_length_prefixed_string(self) -> str:
+        """Read a big-endian length-prefixed ASCII string."""
+        length = self.read_u32_be()
+        return self.read_string(length)
+
     def __enter__(self) -> "BinaryReader":
         """Enter a context manager."""
         return self
