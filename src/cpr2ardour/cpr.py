@@ -20,6 +20,10 @@ def read_root(reader: BinaryReader, chunk: Chunk) -> RootInfo:
     arrangement_name = reader.read_length_prefixed_string()
     arrangement_type = reader.read_length_prefixed_string()
 
+    remaining = reader.remaining(chunk.end_offset)
+
+    print(f"{remaining} bytes remain")
+
     return RootInfo(
         arrangement_name=arrangement_name,
         arrangement_type=arrangement_type,

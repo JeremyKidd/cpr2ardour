@@ -67,6 +67,10 @@ class BinaryReader:
         length = self.read_u32_be()
         return self.read_string(length)
 
+    def remaining(self, end_offset: int) -> int:
+        """Return the number of bytes remaining until end_offset."""
+        return end_offset - self.tell()
+
     def __enter__(self) -> "BinaryReader":
         """Enter a context manager."""
         return self
