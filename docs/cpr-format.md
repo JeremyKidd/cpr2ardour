@@ -44,3 +44,17 @@ Notes:
 
 - The first string appears to be the arrangement name.
 - The purpose of the second string is currently unknown.
+
+## ARCH chunk
+
+Offset 52.
+
+Observed beginning:
+
+- `0xfffffffe` + length-prefixed string `GDocument`
+- `0xfffffffe` + length-prefixed string `GModel`
+- `0xfffffffe` + length-prefixed string `FShared`
+- `0xfffffffe` + length-prefixed string `CmObject`
+- `0xffffffff` + length-prefixed string `PArrangement`
+
+After this, the structure changes at offset 156.
