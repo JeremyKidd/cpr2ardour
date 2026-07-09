@@ -3,9 +3,9 @@ from pathlib import Path
 
 from cpr2ardour.binary import BinaryReader
 from cpr2ardour.cpr import (
-    ClassTable,
+    InitialNames,
     RootInfo,
-    read_class_table,
+    read_initial_names,
     read_root,
 )
 from cpr2ardour.riff import Chunk, RiffFile, read_chunk_header, read_riff
@@ -22,20 +22,43 @@ def main() -> None:
         help="Path to a Cubase .cpr file.",
     )
 
+    parser.add_argument(
+        "--dump-arch",
+        type=int,
+        metavar="BYTES",
+        help="Dump the first BYTES of the ARCH chunk.",
+    )
+
     args = parser.parse_args()
 
     with BinaryReader.open(args.path) as reader:
         riff = read_riff(reader)
         root = read_root(reader, riff.root)
         arch = read_chunk_header(reader)
-        class_table = read_class_table(reader, arch)
+        initial_names = read_initial_names(reader, arch)
+
+        if args.dump_arch is not None:
+            reader.seek(arch.data_offset)
+            data = reader.read_bytes(args.dump_arch)
+
+            print()
+            print("ARCH dump")
+            print(data.hex(" "))
+
+        position = reader.tell()
+        data = reader.read_bytes(256)
+
+        print("After class table")
+        print("  Offset:", position)
+        print("  Bytes :", data.hex(" "))
+        print()
 
     print_summary(
         args.path,
         riff,
         root,
         arch,
-        class_table,
+        initial_names,
     )
 
 
@@ -44,7 +67,7 @@ def print_summary(
     riff: RiffFile,
     root: RootInfo,
     arch: Chunk,
-    class_table: ClassTable,
+    initial_names: InitialNames,
 ) -> None:
     """Print a summary of a Cubase project."""
 
@@ -65,9 +88,9 @@ def print_summary(
     print(f"  Size        : {arch.size} bytes")
 
     print()
-    print("Classes")
+    print("Initial names")
 
-    for name in class_table.classes:
+    for name in initial_names.names:
         print(f"  {name}")
 
 

@@ -33,10 +33,7 @@ class ArchiveInfo:
     classes: list[str]
 
 
-def read_archive_info(
-    reader: BinaryReader,
-    chunk: Chunk,
-) -> ArchiveInfo:
+def read_archive_info(reader: BinaryReader, chunk: Chunk) -> ArchiveInfo:
     """Read the initial class names from the ARCH chunk."""
 
     reader.seek(chunk.data_offset)
@@ -63,18 +60,21 @@ def read_archive_info(
 
 
 @dataclass(slots=True)
-class ClassTable:
-    """Class names discovered at the start of the ARCH chunk."""
+class InitialNames:
+    """Initial marker/name records found in the ARCH chunk."""
 
-    classes: list[str]
+    names: list[str]
 
 
-def read_class_table(reader: BinaryReader, chunk: Chunk) -> ClassTable:
-    """Read the initial class table from the ARCH chunk."""
+def read_initial_names(
+    reader: BinaryReader,
+    chunk: Chunk,
+) -> InitialNames:
+    """Read the initial marker/name records from the ARCH chunk."""
 
     reader.seek(chunk.data_offset)
 
-    classes: list[str] = []
+    names: list[str] = []
 
     while True:
         position = reader.tell()
@@ -85,11 +85,11 @@ def read_class_table(reader: BinaryReader, chunk: Chunk) -> ClassTable:
             break
 
         class_name = reader.read_length_prefixed_string().rstrip("\x00")
-        classes.append(class_name)
+        names.append(class_name)
 
         while reader.read(1) == b"\x00":
             pass
 
         reader.skip(-1)
 
-    return ClassTable(classes=classes)
+    return InitialNames(names=names)

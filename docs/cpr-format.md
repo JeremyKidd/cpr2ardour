@@ -58,3 +58,28 @@ Observed beginning:
 - `0xffffffff` + length-prefixed string `PArrangement`
 
 After this, the structure changes at offset 156.
+
+After the initial class entries, offset 156 contains:
+
+03 00 04 8d 70
+
+After that, more class-style entries continue:
+
+- MGroupEvent
+- MPartEvent
+- MEvent
+
+Further ARCH observations from offset 156:
+
+- More marker/name records appear after a 5-byte sequence `03 00 04 8d 70`.
+- Observed names:
+  - MGroupEvent
+  - MPartEvent
+  - MEvent
+  - CmIDLink
+  - MRoot
+  - MDataNode
+  - MTrackList
+  - MTrackEvent
+  - MMidiTrackEvent
+- These records are interleaved with other binary data, so `read_class_table()` currently only reads the initial simple sequence.

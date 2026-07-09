@@ -28,9 +28,7 @@ class BinaryReader:
         data = self.file.read(size)
 
         if len(data) != size:
-            raise EOFError(
-                f"Expected {size} bytes but only read {len(data)}."
-            )
+            raise EOFError(f"Expected {size} bytes but only read {len(data)}.")
 
         return data
 
