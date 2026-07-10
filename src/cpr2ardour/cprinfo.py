@@ -5,6 +5,7 @@ from cpr2ardour.binary import BinaryReader
 from cpr2ardour.cpr import (
     InitialNames,
     RootInfo,
+    find_audio_references,
     read_initial_names,
     read_root,
 )
@@ -29,6 +30,24 @@ def main() -> None:
         help="Dump the first BYTES of the ARCH chunk.",
     )
 
+    parser.add_argument(
+        "--find-audio",
+        action="store_true",
+        help="Find referenced .wav audio files.",
+    )
+
+    parser.add_argument(
+        "--audio-dir",
+        type=Path,
+        help="Path to the Cubase Audio directory.",
+    )
+
+    parser.add_argument(
+        "--verbose-audio",
+        action="store_true",
+        help="List individual missing and unreferenced audio files.",
+    )
+
     args = parser.parse_args()
 
     with BinaryReader.open(args.path) as reader:
@@ -45,14 +64,6 @@ def main() -> None:
             print("ARCH dump")
             print(data.hex(" "))
 
-        position = reader.tell()
-        data = reader.read_bytes(256)
-
-        print("After class table")
-        print("  Offset:", position)
-        print("  Bytes :", data.hex(" "))
-        print()
-
     print_summary(
         args.path,
         riff,
@@ -60,6 +71,85 @@ def main() -> None:
         arch,
         initial_names,
     )
+
+    if args.find_audio:
+        audio_references = find_audio_references(args.path)
+
+        print(f"Total references : {len(audio_references)}")
+
+        referenced = {ref.filename for ref in audio_references}
+        print(f"Unique filenames : {len(referenced)}")
+
+        print()
+        print("Audio references")
+
+        for reference in audio_references:
+            print(f"  {reference.filename} @ offset {reference.offset}")
+
+    if args.audio_dir is not None:
+        audio_references = find_audio_references(args.path)
+
+        referenced_by_key = {
+            reference.filename.casefold(): reference.filename
+            for reference in audio_references
+        }
+
+        actual_by_key = {
+            path.name.casefold(): path.name
+            for path in args.audio_dir.iterdir()
+            if path.is_file() and path.suffix.casefold() == ".wav"
+        }
+
+        missing_keys = referenced_by_key.keys() - actual_by_key.keys()
+        unreferenced_keys = actual_by_key.keys() - referenced_by_key.keys()
+
+        missing = sorted(
+            (referenced_by_key[key] for key in missing_keys),
+            key=str.casefold,
+        )
+
+        unreferenced = sorted(
+            (actual_by_key[key] for key in unreferenced_keys),
+            key=str.casefold,
+        )
+
+        recordings, generated_fades, external_resources = classify_missing_audio(
+            missing
+        )
+
+        print()
+        print("Audio directory check")
+        print(f"  Referenced in CPR  : {len(referenced_by_key)}")
+        print(f"  Present in Audio   : {len(actual_by_key)}")
+        print(f"  Missing source recordings : {len(recordings)}")
+        print(f"  Missing fades      : {len(generated_fades)}")
+        print(f"  Missing external   : {len(external_resources)}")
+        print(f"  Unreferenced       : {len(unreferenced)}")
+
+        if args.verbose_audio:
+            if recordings:
+                print()
+                print("Missing original recordings")
+                for name in recordings:
+                    print(f"  {name}")
+
+            if generated_fades:
+                print()
+                print("Missing generated fades")
+                for name in generated_fades:
+                    print(f"  {name}")
+
+            if external_resources:
+                print()
+                print("Missing external resources")
+                for name in external_resources:
+                    print(f"  {name}")
+
+            if unreferenced:
+                print()
+                print("In Audio but not referenced")
+                for name in unreferenced:
+                    print(f"  {name}")
 
 
 def print_summary(
@@ -92,6 +182,26 @@ def print_summary(
 
     for name in initial_names.names:
         print(f"  {name}")
+
+
+def classify_missing_audio(
+    filenames: list[str],
+) -> tuple[list[str], list[str], list[str]]:
+    """Classify missing audio references."""
+
+    generated_fades: list[str] = []
+    external_resources: list[str] = []
+    recordings: list[str] = []
+
+    for filename in filenames:
+        if filename.startswith(("FadeIn", "FadeOut")):
+            generated_fades.append(filename)
+        elif filename.casefold() in {"hiclave.wav", "lowclave.wav"}:
+            external_resources.append(filename)
+        else:
+            recordings.append(filename)
+
+    return recordings, generated_fades, external_resources
 
 
 if __name__ == "__main__":

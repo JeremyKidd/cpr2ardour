@@ -83,3 +83,20 @@ Further ARCH observations from offset 156:
   - MTrackEvent
   - MMidiTrackEvent
 - These records are interleaved with other binary data, so `read_class_table()` currently only reads the initial simple sequence.
+
+## Audio references
+
+PAudioClip
+Name : G Vox_11
+File : G Vox_11.wav
+Path : E:\Red Guitars\Sapphic 2\Audio\
+Type : Broadcast Wave File
+
+Observed audio reference:
+
+- Clip/name field: `G Vox_11`
+- Referenced audio file: `Vox_11.wav`
+- Original folder: `E:\Red Guitars\Sapphic 2\Audio\`
+- File type: `Broadcast Wave File`
+
+The leading `G ` appears in CPR metadata but is not part of the actual filesystem filename.
