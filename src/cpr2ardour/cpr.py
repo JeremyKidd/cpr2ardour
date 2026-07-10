@@ -150,3 +150,121 @@ def find_audio_references(path: Path) -> list[AudioReference]:
         search_from = reference_end
 
     return references
+
+
+@dataclass(slots=True)
+class ObjectOccurrence:
+    """Location of a named object marker in a CPR file."""
+
+    name: str
+    offset: int
+
+
+def find_object_occurrences(
+    path: Path,
+    object_name: str,
+) -> list[ObjectOccurrence]:
+    """Find occurrences of an ASCII object name in a CPR file."""
+
+    data = path.read_bytes()
+    needle = object_name.encode("ascii")
+    occurrences: list[ObjectOccurrence] = []
+
+    start = 0
+
+    while True:
+        offset = data.find(needle, start)
+
+        if offset == -1:
+            break
+
+        occurrences.append(
+            ObjectOccurrence(
+                name=object_name,
+                offset=offset,
+            )
+        )
+
+        start = offset + len(needle)
+
+    return occurrences
+
+
+@dataclass(slots=True)
+class AudioTrackInfo:
+    """Basic information recovered from an audio track object."""
+
+    object_offset: int
+    name: str
+
+
+def find_audio_tracks(path: Path) -> list[AudioTrackInfo]:
+    """Find candidate MAudioTrackEvent objects and recover nearby track names."""
+
+    data = path.read_bytes()
+    needle = b"MAudioTrackEvent"
+    tracks: list[AudioTrackInfo] = []
+
+    search_from = 0
+
+    while True:
+        object_offset = data.find(needle, search_from)
+
+        if object_offset == -1:
+            break
+
+        # Ignore schema-style occurrences by looking for a nearby
+        # length-prefixed printable string before the next MAudioEvent.
+        window_start = object_offset + len(needle)
+        window_end = min(len(data), window_start + 160)
+        window = data[window_start:window_end]
+
+        audio_event_offset = window.find(b"MAudioEvent")
+
+        if audio_event_offset == -1:
+            search_from = object_offset + len(needle)
+            continue
+
+        search_end = audio_event_offset
+
+        name: str | None = None
+
+        for offset in range(0, max(0, search_end - 4)):
+            length = int.from_bytes(
+                window[offset : offset + 4],
+                byteorder="big",
+            )
+
+            if not 1 <= length <= 128:
+                continue
+
+            text_start = offset + 4
+            text_end = text_start + length
+
+            if text_end > search_end:
+                continue
+
+            raw = window[text_start:text_end].rstrip(b"\x00")
+
+            if not raw:
+                continue
+
+            if all(32 <= byte <= 126 for byte in raw):
+                candidate = raw.decode("ascii")
+
+                # Avoid accepting the object names themselves.
+                if candidate not in {"MAudioEvent", "MAudioTrackEvent"}:
+                    name = candidate
+                    break
+
+        if name is not None:
+            tracks.append(
+                AudioTrackInfo(
+                    object_offset=object_offset,
+                    name=name,
+                )
+            )
+
+        search_from = object_offset + len(needle)
+
+    return tracks

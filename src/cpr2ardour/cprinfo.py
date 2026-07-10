@@ -5,10 +5,13 @@ from cpr2ardour.binary import BinaryReader
 from cpr2ardour.cpr import (
     InitialNames,
     RootInfo,
+    find_audio_tracks,
     find_audio_references,
+    find_object_occurrences,
     read_initial_names,
     read_root,
 )
+
 from cpr2ardour.riff import Chunk, RiffFile, read_chunk_header, read_riff
 
 
@@ -48,6 +51,31 @@ def main() -> None:
         help="List individual missing and unreferenced audio files.",
     )
 
+    parser.add_argument(
+        "--find-object",
+        metavar="NAME",
+        help="Find occurrences of an object name in the CPR file.",
+    )
+
+    parser.add_argument(
+        "--dump-around",
+        type=int,
+        metavar="OFFSET",
+        help="Dump bytes around a file offset.",
+    )
+
+    parser.add_argument(
+        "--find-track-names",
+        action="store_true",
+        help="Investigate names near MAudioTrackEvent objects.",
+    )
+
+    parser.add_argument(
+        "--find-tracks",
+        action="store_true",
+        help="Find candidate audio track names.",
+    )
+
     args = parser.parse_args()
 
     with BinaryReader.open(args.path) as reader:
@@ -64,6 +92,16 @@ def main() -> None:
             print("ARCH dump")
             print(data.hex(" "))
 
+        if args.dump_around is not None:
+            start = max(0, args.dump_around - 64)
+            reader.seek(start)
+            data = reader.read_bytes(192)
+
+            print()
+            print(f"Bytes around offset {args.dump_around}")
+            print(f"  Start: {start}")
+            print(data.hex(" "))
+
     print_summary(
         args.path,
         riff,
@@ -71,6 +109,65 @@ def main() -> None:
         arch,
         initial_names,
     )
+
+    if args.find_tracks:
+        tracks = find_audio_tracks(args.path)
+
+        print()
+        print("Audio tracks")
+
+        for track in tracks:
+            print(f"  {track.name} @ offset {track.object_offset}")
+
+    if args.find_track_names:
+        data = args.path.read_bytes()
+        needle = b"MAudioTrackEvent"
+        start = 0
+
+        print()
+        print("Candidate audio track objects")
+
+        while True:
+            object_offset = data.find(needle, start)
+
+            if object_offset == -1:
+                break
+
+            # Ignore the later schema entry for now.
+            window_end = min(len(data), object_offset + 128)
+            window = data[object_offset:window_end]
+
+            print()
+            print(f"  MAudioTrackEvent at offset {object_offset}")
+
+            # Show printable strings found nearby.
+            current = bytearray()
+
+            for byte in window:
+                if 32 <= byte <= 126:
+                    current.append(byte)
+                else:
+                    if len(current) >= 3:
+                        print(f"    {current.decode('ascii')}")
+                    current.clear()
+
+            if len(current) >= 3:
+                print(f"    {current.decode('ascii')}")
+
+            start = object_offset + len(needle)
+
+    if args.find_object is not None:
+        occurrences = find_object_occurrences(
+            args.path,
+            args.find_object,
+        )
+
+        print()
+        print(f"Object occurrences: {args.find_object}")
+        print(f"  Count: {len(occurrences)}")
+
+        for occurrence in occurrences:
+            print(f"  Offset: {occurrence.offset}")
 
     if args.find_audio:
         audio_references = find_audio_references(args.path)
