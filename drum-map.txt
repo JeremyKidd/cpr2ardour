@@ -1,0 +1,149 @@
+CPR Information
+
+File        : /home/jeremy/Music/2007CubaseSessions/Black Sheep/Black Sheep kit.cpr
+RIFF form   : NUND
+
+ROOT
+  Arrangement : Arrangement1
+  Type        : PArrangement
+
+ARCH
+  Offset      : 52
+  Size        : 287722 bytes
+
+Initial names
+  GDocument
+  GModel
+  FShared
+  CmObject
+  PArrangement
+
+Drum-map entries
+Entry   0: size=37, values=(0, 0, 0), name='---', offset=245537, trailer=80 03 be c9
+Entry   1: size=37, values=(1, 1, 1), name='---', offset=245582, trailer=80 03 be c9
+Entry   2: size=37, values=(2, 2, 2), name='---', offset=245627, trailer=80 03 be c9
+Entry   3: size=37, values=(3, 3, 3), name='---', offset=245672, trailer=80 03 be c9
+Entry   4: size=37, values=(4, 4, 4), name='---', offset=245717, trailer=80 03 be c9
+Entry   5: size=37, values=(5, 5, 5), name='---', offset=245762, trailer=80 03 be c9
+Entry   6: size=37, values=(6, 6, 6), name='---', offset=245807, trailer=80 03 be c9
+Entry   7: size=37, values=(7, 7, 7), name='---', offset=245852, trailer=80 03 be c9
+Entry   8: size=37, values=(8, 8, 8), name='---', offset=245897, trailer=80 03 be c9
+Entry   9: size=37, values=(9, 9, 9), name='---', offset=245942, trailer=80 03 be c9
+Entry  10: size=37, values=(10, 10, 10), name='---', offset=245987, trailer=80 03 be c9
+Entry  11: size=37, values=(11, 11, 11), name='---', offset=246032, trailer=80 03 be c9
+Entry  12: size=37, values=(12, 12, 12), name='---', offset=246077, trailer=80 03 be c9
+Entry  13: size=37, values=(13, 13, 13), name='---', offset=246122, trailer=80 03 be c9
+Entry  14: size=37, values=(14, 14, 14), name='---', offset=246167, trailer=80 03 be c9
+Entry  15: size=37, values=(15, 15, 15), name='---', offset=246212, trailer=80 03 be c9
+Entry  16: size=37, values=(16, 16, 16), name='---', offset=246257, trailer=80 03 be c9
+Entry  17: size=37, values=(17, 17, 17), name='---', offset=246302, trailer=80 03 be c9
+Entry  18: size=37, values=(18, 18, 18), name='---', offset=246347, trailer=80 03 be c9
+Entry  19: size=37, values=(19, 19, 19), name='---', offset=246392, trailer=80 03 be c9
+Entry  20: size=37, values=(20, 20, 20), name='---', offset=246437, trailer=80 03 be c9
+Entry  21: size=37, values=(21, 21, 21), name='---', offset=246482, trailer=80 03 be c9
+Entry  22: size=37, values=(22, 22, 22), name='---', offset=246527, trailer=80 03 be c9
+Entry  23: size=37, values=(23, 23, 23), name='---', offset=246572, trailer=80 03 be c9
+Entry  24: size=37, values=(24, 24, 24), name='---', offset=246617, trailer=80 03 be c9
+Entry  25: size=37, values=(25, 25, 25), name='---', offset=246662, trailer=80 03 be c9
+Entry  26: size=37, values=(26, 26, 26), name='---', offset=246707, trailer=80 03 be c9
+Entry  27: size=37, values=(27, 27, 27), name='---', offset=246752, trailer=80 03 be c9
+Entry  28: size=37, values=(28, 28, 28), name='---', offset=246797, trailer=80 03 be c9
+Entry  29: size=46, values=(29, 29, 29), name='Scratch Push', offset=246842, trailer=80 03 be c9
+Entry  30: size=46, values=(30, 30, 30), name='Scratch Pull', offset=246896, trailer=80 03 be c9
+Entry  31: size=37, values=(31, 31, 31), name='---', offset=246950, trailer=80 03 be c9
+Entry  32: size=37, values=(32, 32, 32), name='---', offset=246995, trailer=80 03 be c9
+Entry  33: size=43, values=(33, 33, 33), name='Metronome', offset=247040, trailer=80 03 be c9
+Entry  34: size=37, values=(34, 34, 34), name='---', offset=247091, trailer=80 03 be c9
+Entry  35: size=52, values=(35, 35, 35), name='Acoustic Bass Drum', offset=247136, trailer=80 03 be c9
+Entry  36: size=43, values=(36, 36, 36), name='Bass Drum', offset=247196, trailer=80 03 be c9
+Entry  37: size=44, values=(37, 37, 37), name='Side Stick', offset=247247, trailer=80 03 be c9
+Entry  38: size=48, values=(38, 38, 38), name='Acoustic Snare', offset=247299, trailer=80 03 be c9
+Entry  39: size=43, values=(39, 39, 39), name='Hand Clap', offset=247355, trailer=80 03 be c9
+Entry  40: size=48, values=(40, 40, 40), name='Electric Snare', offset=247406, trailer=80 03 be c9
+Entry  41: size=47, values=(41, 41, 41), name='Low Floor Tom', offset=247462, trailer=80 03 be c9
+Entry  42: size=47, values=(42, 42, 42), name='Closed Hi-Hat', offset=247517, trailer=80 03 be c9
+Entry  43: size=48, values=(43, 43, 43), name='High Floor Tom', offset=247572, trailer=80 03 be c9
+Entry  44: size=46, values=(44, 44, 44), name='Pedal Hi-Hat', offset=247628, trailer=80 03 be c9
+Entry  45: size=41, values=(45, 45, 45), name='Low Tom', offset=247682, trailer=80 03 be c9
+Entry  46: size=45, values=(46, 46, 46), name='Open Hi-Hat', offset=247731, trailer=80 03 be c9
+Entry  47: size=48, values=(47, 47, 47), name='Low Middle Tom', offset=247784, trailer=80 03 be c9
+Entry  48: size=49, values=(48, 48, 48), name='High Middle Tom', offset=247840, trailer=80 03 be c9
+Entry  49: size=48, values=(49, 49, 49), name='Crash Cymbal 1', offset=247897, trailer=80 03 be c9
+Entry  50: size=42, values=(50, 50, 50), name='High Tom', offset=247953, trailer=80 03 be c9
+Entry  51: size=47, values=(51, 51, 51), name='Ride Cymbal 1', offset=248003, trailer=80 03 be c9
+Entry  52: size=48, values=(52, 52, 52), name='Chinese Cymbal', offset=248058, trailer=80 03 be c9
+Entry  53: size=43, values=(53, 53, 53), name='Ride Bell', offset=248114, trailer=80 03 be c9
+Entry  54: size=44, values=(54, 54, 54), name='Tambourine', offset=248165, trailer=80 03 be c9
+Entry  55: size=47, values=(55, 55, 55), name='Splash Cymbal', offset=248217, trailer=80 03 be c9
+Entry  56: size=41, values=(56, 56, 56), name='Cowbell', offset=248272, trailer=80 03 be c9
+Entry  57: size=48, values=(57, 57, 57), name='Crash Cymbal 2', offset=248321, trailer=80 03 be c9
+Entry  58: size=43, values=(58, 58, 58), name='Vibraslap', offset=248377, trailer=80 03 be c9
+Entry  59: size=47, values=(59, 59, 59), name='Ride Cymbal 2', offset=248428, trailer=80 03 be c9
+Entry  60: size=44, values=(60, 60, 60), name='High Bongo', offset=248483, trailer=80 03 be c9
+Entry  61: size=43, values=(61, 61, 61), name='Low Bongo', offset=248535, trailer=80 03 be c9
+Entry  62: size=49, values=(62, 62, 62), name='Mute High Bongo', offset=248586, trailer=80 03 be c9
+Entry  63: size=49, values=(63, 63, 63), name='Open High Conga', offset=248643, trailer=80 03 be c9
+Entry  64: size=43, values=(64, 64, 64), name='Low Conga', offset=248700, trailer=80 03 be c9
+Entry  65: size=46, values=(65, 65, 65), name='High Timbale', offset=248751, trailer=80 03 be c9
+Entry  66: size=45, values=(66, 66, 66), name='Low Timbale', offset=248805, trailer=80 03 be c9
+Entry  67: size=44, values=(67, 67, 67), name='High Agogo', offset=248858, trailer=80 03 be c9
+Entry  68: size=43, values=(68, 68, 68), name='Low Agogo', offset=248910, trailer=80 03 be c9
+Entry  69: size=40, values=(69, 69, 69), name='Cabasa', offset=248961, trailer=80 03 be c9
+Entry  70: size=41, values=(70, 70, 70), name='Maracas', offset=249009, trailer=80 03 be c9
+Entry  71: size=47, values=(71, 71, 71), name='Short Whistle', offset=249058, trailer=80 03 be c9
+Entry  72: size=46, values=(72, 72, 72), name='Long Whistle', offset=249113, trailer=80 03 be c9
+Entry  73: size=45, values=(73, 73, 73), name='Short Guiro', offset=249167, trailer=80 03 be c9
+Entry  74: size=44, values=(74, 74, 74), name='Long Guiro', offset=249220, trailer=80 03 be c9
+Entry  75: size=40, values=(75, 75, 75), name='Claves', offset=249272, trailer=80 03 be c9
+Entry  76: size=49, values=(76, 76, 76), name='High Wood Block', offset=249320, trailer=80 03 be c9
+Entry  77: size=48, values=(77, 77, 77), name='Low Wood Block', offset=249377, trailer=80 03 be c9
+Entry  78: size=44, values=(78, 78, 78), name='Mute Cuica', offset=249433, trailer=80 03 be c9
+Entry  79: size=44, values=(79, 79, 79), name='Open Cuica', offset=249485, trailer=80 03 be c9
+Entry  80: size=47, values=(80, 80, 80), name='Mute Triangle', offset=249537, trailer=80 03 be c9
+Entry  81: size=47, values=(81, 81, 81), name='Open Triangle', offset=249592, trailer=80 03 be c9
+Entry  82: size=40, values=(82, 82, 82), name='Shaker', offset=249647, trailer=80 03 be c9
+Entry  83: size=43, values=(83, 83, 83), name='Castanets', offset=249695, trailer=80 03 be c9
+Entry  84: size=37, values=(84, 84, 84), name='---', offset=249746, trailer=80 03 be c9
+Entry  85: size=37, values=(85, 85, 85), name='---', offset=249791, trailer=80 03 be c9
+Entry  86: size=37, values=(86, 86, 86), name='---', offset=249836, trailer=80 03 be c9
+Entry  87: size=37, values=(87, 87, 87), name='---', offset=249881, trailer=80 03 be c9
+Entry  88: size=37, values=(88, 88, 88), name='---', offset=249926, trailer=80 03 be c9
+Entry  89: size=37, values=(89, 89, 89), name='---', offset=249971, trailer=80 03 be c9
+Entry  90: size=37, values=(90, 90, 90), name='---', offset=250016, trailer=80 03 be c9
+Entry  91: size=37, values=(91, 91, 91), name='---', offset=250061, trailer=80 03 be c9
+Entry  92: size=37, values=(92, 92, 92), name='---', offset=250106, trailer=80 03 be c9
+Entry  93: size=37, values=(93, 93, 93), name='---', offset=250151, trailer=80 03 be c9
+Entry  94: size=37, values=(94, 94, 94), name='---', offset=250196, trailer=80 03 be c9
+Entry  95: size=37, values=(95, 95, 95), name='---', offset=250241, trailer=80 03 be c9
+Entry  96: size=37, values=(96, 96, 96), name='---', offset=250286, trailer=80 03 be c9
+Entry  97: size=37, values=(97, 97, 97), name='---', offset=250331, trailer=80 03 be c9
+Entry  98: size=37, values=(98, 98, 98), name='---', offset=250376, trailer=80 03 be c9
+Entry  99: size=37, values=(99, 99, 99), name='---', offset=250421, trailer=80 03 be c9
+Entry 100: size=37, values=(100, 100, 100), name='---', offset=250466, trailer=80 03 be c9
+Entry 101: size=37, values=(101, 101, 101), name='---', offset=250511, trailer=80 03 be c9
+Entry 102: size=37, values=(102, 102, 102), name='---', offset=250556, trailer=80 03 be c9
+Entry 103: size=37, values=(103, 103, 103), name='---', offset=250601, trailer=80 03 be c9
+Entry 104: size=37, values=(104, 104, 104), name='---', offset=250646, trailer=80 03 be c9
+Entry 105: size=37, values=(105, 105, 105), name='---', offset=250691, trailer=80 03 be c9
+Entry 106: size=37, values=(106, 106, 106), name='---', offset=250736, trailer=80 03 be c9
+Entry 107: size=37, values=(107, 107, 107), name='---', offset=250781, trailer=80 03 be c9
+Entry 108: size=37, values=(108, 108, 108), name='---', offset=250826, trailer=80 03 be c9
+Entry 109: size=37, values=(109, 109, 109), name='---', offset=250871, trailer=80 03 be c9
+Entry 110: size=37, values=(110, 110, 110), name='---', offset=250916, trailer=80 03 be c9
+Entry 111: size=37, values=(111, 111, 111), name='---', offset=250961, trailer=80 03 be c9
+Entry 112: size=37, values=(112, 112, 112), name='---', offset=251006, trailer=80 03 be c9
+Entry 113: size=37, values=(113, 113, 113), name='---', offset=251051, trailer=80 03 be c9
+Entry 114: size=37, values=(114, 114, 114), name='---', offset=251096, trailer=80 03 be c9
+Entry 115: size=37, values=(115, 115, 115), name='---', offset=251141, trailer=80 03 be c9
+Entry 116: size=37, values=(116, 116, 116), name='---', offset=251186, trailer=80 03 be c9
+Entry 117: size=37, values=(117, 117, 117), name='---', offset=251231, trailer=80 03 be c9
+Entry 118: size=37, values=(118, 118, 118), name='---', offset=251276, trailer=80 03 be c9
+Entry 119: size=37, values=(119, 119, 119), name='---', offset=251321, trailer=80 03 be c9
+Entry 120: size=37, values=(120, 120, 120), name='---', offset=251366, trailer=80 03 be c9
+Entry 121: size=37, values=(121, 121, 121), name='---', offset=251411, trailer=80 03 be c9
+Entry 122: size=37, values=(122, 122, 122), name='---', offset=251456, trailer=80 03 be c9
+Entry 123: size=37, values=(123, 123, 123), name='---', offset=251501, trailer=80 03 be c9
+Entry 124: size=37, values=(124, 124, 124), name='---', offset=251546, trailer=80 03 be c9
+Entry 125: size=37, values=(125, 125, 125), name='---', offset=251591, trailer=80 03 be c9
+Entry 126: size=37, values=(126, 126, 126), name='---', offset=251636, trailer=80 03 be c9
+Entry 127: size=37, values=(127, 127, 127), name='---', offset=251681, trailer=00 00 00 80

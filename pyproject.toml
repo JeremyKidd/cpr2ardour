@@ -12,6 +12,7 @@ dev = ["pytest"]
 
 [project.scripts]
 cprinfo = "cpr2ardour.cprinfo:main"
+cprcorpus = "cpr2ardour.cprcorpus:main"
 
 [build-system]
 requires = ["setuptools>=68"]

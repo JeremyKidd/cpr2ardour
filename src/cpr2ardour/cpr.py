@@ -198,6 +198,97 @@ class AudioTrackInfo:
     name: str
 
 
+@dataclass(slots=True)
+class DrumMapEntry:
+    """One MIDI-note entry from a Cubase drum map."""
+
+    note: int
+    name: str
+    size: int
+    file_offset: int
+    trailer: bytes
+
+
+def read_drum_map_entries(path: Path) -> list[DrumMapEntry]:
+    """Read observed PDrumMapEntry records from a Cubase project."""
+
+    data = path.read_bytes()
+    anchor = data.find(b"PDrumMapEntry\x00")
+
+    if anchor == -1:
+        return []
+
+    position = data.find(
+        b"\x00\x00\x00\x25",
+        anchor + len(b"PDrumMapEntry\x00"),
+    )
+
+    if position == -1:
+        return []
+
+    entries: list[DrumMapEntry] = []
+
+    for _ in range(128):
+        if position + 4 > len(data):
+            break
+
+        size = int.from_bytes(
+            data[position : position + 4],
+            byteorder="big",
+        )
+
+        if not 1 <= size <= 256:
+            break
+
+        record_start = position + 4
+        record_end = record_start + size
+
+        if record_end > len(data):
+            break
+
+        record = data[record_start:record_end]
+
+        note = record[3]
+        name = "<unknown>"
+
+        for offset in range(0, len(record) - 4):
+            length = int.from_bytes(
+                record[offset : offset + 4],
+                byteorder="big",
+            )
+
+            if not 1 <= length <= 64:
+                continue
+
+            text_start = offset + 4
+            text_end = text_start + length
+
+            if text_end > len(record):
+                continue
+
+            raw = record[text_start:text_end].rstrip(b"\x00")
+
+            if raw and all(32 <= byte <= 126 for byte in raw):
+                name = raw.decode("ascii")
+                break
+
+        trailer = data[record_end : record_end + 4]
+
+        entries.append(
+            DrumMapEntry(
+                note=note,
+                name=name,
+                size=size,
+                file_offset=record_start,
+                trailer=trailer,
+            )
+        )
+
+        position = record_end + 4
+
+    return entries
+
+
 def find_audio_tracks(path: Path) -> list[AudioTrackInfo]:
     """Find candidate MAudioTrackEvent objects and recover nearby track names."""
 
@@ -213,10 +304,8 @@ def find_audio_tracks(path: Path) -> list[AudioTrackInfo]:
         if object_offset == -1:
             break
 
-        # Ignore schema-style occurrences by looking for a nearby
-        # length-prefixed printable string before the next MAudioEvent.
         window_start = object_offset + len(needle)
-        window_end = min(len(data), window_start + 160)
+        window_end = min(len(data), window_start + 320)
         window = data[window_start:window_end]
 
         audio_event_offset = window.find(b"MAudioEvent")
@@ -226,36 +315,74 @@ def find_audio_tracks(path: Path) -> list[AudioTrackInfo]:
             continue
 
         search_end = audio_event_offset
-
         name: str | None = None
 
-        for offset in range(0, max(0, search_end - 4)):
-            length = int.from_bytes(
-                window[offset : offset + 4],
-                byteorder="big",
+        # First try the MListNode layout seen in Everyone Knows.cpr.
+        list_node_offset = window.find(b"MListNode")
+
+        if list_node_offset != -1:
+            list_search_start = list_node_offset + len(b"MListNode")
+            list_search_end = min(
+                search_end,
+                list_search_start + 64,
             )
 
-            if not 1 <= length <= 128:
-                continue
+            for offset in range(
+                list_search_start,
+                max(list_search_start, list_search_end - 4),
+            ):
+                length = int.from_bytes(
+                    window[offset : offset + 4],
+                    byteorder="big",
+                )
 
-            text_start = offset + 4
-            text_end = text_start + length
+                if not 1 <= length <= 128:
+                    continue
 
-            if text_end > search_end:
-                continue
+                text_start = offset + 4
+                text_end = text_start + length
 
-            raw = window[text_start:text_end].rstrip(b"\x00")
+                if text_end > list_search_end:
+                    continue
 
-            if not raw:
-                continue
+                raw = window[text_start:text_end].rstrip(b"\x00")
 
-            if all(32 <= byte <= 126 for byte in raw):
-                candidate = raw.decode("ascii")
-
-                # Avoid accepting the object names themselves.
-                if candidate not in {"MAudioEvent", "MAudioTrackEvent"}:
-                    name = candidate
+                if raw and all(32 <= byte <= 126 for byte in raw):
+                    name = raw.decode("ascii")
                     break
+
+        # If that did not work, use the older layout seen in Sapphic3.cpr.
+        if name is None:
+            for offset in range(0, max(0, search_end - 4)):
+                length = int.from_bytes(
+                    window[offset : offset + 4],
+                    byteorder="big",
+                )
+
+                if not 1 <= length <= 128:
+                    continue
+
+                text_start = offset + 4
+                text_end = text_start + length
+
+                if text_end > search_end:
+                    continue
+
+                raw = window[text_start:text_end].rstrip(b"\x00")
+
+                if not raw:
+                    continue
+
+                if all(32 <= byte <= 126 for byte in raw):
+                    candidate = raw.decode("ascii")
+
+                    if candidate not in {
+                        "MAudioEvent",
+                        "MAudioTrackEvent",
+                        "MListNode",
+                    }:
+                        name = candidate
+                        break
 
         if name is not None:
             tracks.append(
@@ -268,3 +395,126 @@ def find_audio_tracks(path: Path) -> list[AudioTrackInfo]:
         search_from = object_offset + len(needle)
 
     return tracks
+
+
+def list_classes(path: Path) -> list[str]:
+    """Return likely Cubase class names from marker/name records."""
+
+    data = path.read_bytes()
+    names: set[str] = set()
+
+    for marker in (b"\xff\xff\xff\xfe", b"\xff\xff\xff\xff"):
+        search_from = 0
+
+        while True:
+            marker_offset = data.find(marker, search_from)
+
+            if marker_offset == -1:
+                break
+
+            length_offset = marker_offset + 4
+
+            if length_offset + 4 > len(data):
+                break
+
+            length = int.from_bytes(
+                data[length_offset : length_offset + 4],
+                byteorder="big",
+            )
+
+            text_start = length_offset + 4
+            text_end = text_start + length
+
+            if 1 <= length <= 128 and text_end <= len(data):
+                raw = data[text_start:text_end].rstrip(b"\x00")
+
+                if raw and all(32 <= byte <= 126 for byte in raw):
+                    try:
+                        name = raw.decode("ascii")
+                    except UnicodeDecodeError:
+                        pass
+                    else:
+                        names.add(name)
+
+            search_from = marker_offset + 4
+
+    return sorted(names)
+
+
+def inspect_drum_map_entries(
+    path: Path,
+    limit: int = 128,
+) -> None:
+    """Print the first few observed PDrumMapEntry records."""
+
+    data = path.read_bytes()
+    anchor = data.find(b"PDrumMapEntry\x00")
+
+    if anchor == -1:
+        print("PDrumMapEntry was not found.")
+        return
+
+    position = data.find(
+        b"\x00\x00\x00\x25",
+        anchor + len(b"PDrumMapEntry\x00"),
+    )
+
+    if position == -1:
+        print("No drum-map records were found.")
+        return
+
+    for entry_number in range(limit):
+        size = int.from_bytes(
+            data[position : position + 4],
+            byteorder="big",
+        )
+
+        if not 1 <= size <= 256:
+            print(f"Stopped at offset {position}: implausible record size {size}.")
+            break
+
+        record_start = position + 4
+        record_end = record_start + size
+        record = data[record_start:record_end]
+
+        if len(record) != size:
+            print("Stopped at the end of the file.")
+            break
+
+        note_values = tuple(record[3:6])
+
+        name = "<unknown>"
+
+        for offset in range(0, len(record) - 4):
+            length = int.from_bytes(
+                record[offset : offset + 4],
+                byteorder="big",
+            )
+
+            text_start = offset + 4
+            text_end = text_start + length
+
+            if not 1 <= length <= 32:
+                continue
+
+            if text_end > len(record):
+                continue
+
+            raw = record[text_start:text_end].rstrip(b"\x00")
+
+            if raw and all(32 <= byte <= 126 for byte in raw):
+                name = raw.decode("ascii")
+                break
+
+        trailer = data[record_end : record_end + 4]
+
+        print(
+            f"Entry {entry_number:3}: "
+            f"size={size}, "
+            f"values={note_values!r}, "
+            f"name={name!r}, "
+            f"offset={record_start}, "
+            f"trailer={trailer.hex(' ')}"
+        )
+
+        position = record_end + 4

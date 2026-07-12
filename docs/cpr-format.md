@@ -100,3 +100,32 @@ Observed audio reference:
 - File type: `Broadcast Wave File`
 
 The leading `G ` appears in CPR metadata but is not part of the actual filesystem filename.
+
+## MAudioTrackEvent observation
+
+Real object found at offset 112231.
+
+Object name ends at offset 112247. Following bytes:
+
+- 112247–112286: unknown fixed fields
+- 112287–112296:
+  - `00 00 00 06`
+  - ASCII `G Vox\0`
+- 112297 onward: additional unknown fields
+- Nearby child/object name:
+  - `MAudioEvent`
+
+## MAudioTrackEvent
+
+A real object instance was observed at offset 112231.
+
+- Object class name: `MAudioTrackEvent`
+- Payload begins: offset 112247
+- Unknown fixed fields: offsets 112247–112287
+- Track-name length field: offset 112288
+- Stored length: 6
+- Track name: `G Vox\0`
+- Track-name bytes: offsets 112292–112297
+- A nearby child/object record is named `MAudioEvent`
+
+The stored track-name length includes the terminating NUL byte.  
